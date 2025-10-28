@@ -7,8 +7,13 @@ import SelectField from "@/components/forms/SelectField";
 import { INVESTMENT_GOALS, PREFERRED_INDUSTRIES, RISK_TOLERANCE_OPTIONS } from "@/lib/constants";
 import {CountrySelectField} from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
+import { signUpWithEmail } from "@/lib/actions/auth.actions";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { error } from "console";
 
 const SignUp = () => {
+  const router=useRouter();
   const {
     register,
     handleSubmit,
@@ -27,13 +32,17 @@ const SignUp = () => {
     mode: 'onBlur'
 
   },)
-  const onSubmit = async (data: SignInFormData) => {
+  const onSubmit = async (data: SignUpFormData) => {
     try {
-      console.log(data);
+    const result= await signUpWithEmail(data);
+    if(result.success) router.push('/')
 
 
-    } catch (error) {
-      console.error(error)
+    } catch (e) {
+      console.error(e)
+      toast.error('Sign up failed', {
+        description: e instanceof Error? e.message: 'failed to create an account'
+      })
     }
   }
 
