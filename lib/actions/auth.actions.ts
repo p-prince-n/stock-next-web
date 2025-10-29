@@ -1,6 +1,6 @@
 'use server';
 
-import { date, email } from "better-auth";
+import { headers } from "next/headers";
 import { auth } from "../better-auth/auth";
 import { inngest } from "../inngest/client";
 
@@ -30,3 +30,32 @@ export const signUpWithEmail=async({email, password, fullName, country, investme
         
     }
 }
+
+export const signOut=async()=>{
+    try {
+        await auth.api.signOut({headers: await headers()})
+    } catch (error) {
+          console.log('Sign Out failed', error);
+        return {success: false, error: 'Sign Out failed'}
+        
+    }
+}
+
+export const signInWithEmail = async ({ email, password }: SignInFormData) => {
+  try {
+    const response = await auth.api.signInEmail({
+      body: { email, password },
+    });
+
+    return { success: true, data: response };
+  } catch (error: any) {
+    console.error('Sign In failed:', error);
+
+    const errorMessage =
+      error?.response?.data?.message ||
+      error?.message ||
+      'Invalid email or password.';
+
+    return { success: false, error: errorMessage };
+  }
+};

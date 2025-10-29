@@ -5,10 +5,14 @@ import { Spinner } from "@/components/ui/spinner"
 import InputField from "@/components/forms/InputField";
 import SelectField from "@/components/forms/SelectField";
 import { INVESTMENT_GOALS, PREFERRED_INDUSTRIES, RISK_TOLERANCE_OPTIONS } from "@/lib/constants";
-import {CountrySelectField} from "@/components/forms/CountrySelectField";
+import { CountrySelectField } from "@/components/forms/CountrySelectField";
 import FooterLink from "@/components/forms/FooterLink";
+import { toast } from "sonner";
+import { useRouter } from "next/navigation";
+import { signInWithEmail } from "@/lib/actions/auth.actions";
 
 const SignIn = () => {
+  const router = useRouter()
   const {
     register,
     handleSubmit,
@@ -24,21 +28,31 @@ const SignIn = () => {
   },)
   const onSubmit = async (data: SignInFormData) => {
     try {
-      console.log(data);
+      const result = await signInWithEmail(data);
 
-
-    } catch (error) {
-      console.error(error)
+      if (result.success) {
+        router.push('/');
+      } else {
+        toast.error('Sign In failed', {
+          description: result.error || 'Invalid email or password.',
+        });
+      }
+    } catch (e) {
+      console.error(e);
+      toast.error('Sign In failed', {
+        description:
+          e instanceof Error ? e.message : 'Something went wrong while signing in.',
+      });
     }
-  }
+  };
 
   return (
     <>
       <h1 className='form-title'>Log In Your Account</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-5 ">
-       
 
-          <InputField
+
+        <InputField
           name="email"
           label="Email"
           type="email"
@@ -47,10 +61,10 @@ const SignIn = () => {
           error={errors.email}
           validation={{
             required: 'Email is required',
-            pattern:/^\w+@\w+\.\w+$/, message:'Invalid email address'
+            pattern: /^\w+@\w+\.\w+$/, message: 'Invalid email address'
           }}
         />
-       
+
         <InputField
           name="password"
           label="Password"
@@ -63,11 +77,11 @@ const SignIn = () => {
             minLength: { value: 8, message: 'Minimum 8 characters needed' }
           }}
         />
-      
+
         <Button disabled={isSubmitting} type="submit" className="bg-gradient-to-br from-purple-600 to-blue-500 text-white hover:bg-gradient-to-bl focus:ring-blue-300 dark:focus:ring-blue-800 w-full mt-5" >
           {isSubmitting ? <Spinner className="text-black" /> : 'log in'}
         </Button>
-        <FooterLink text="Don't have an account" linkText="Sign up" href="/sign-up"/> 
+        <FooterLink text="Don't have an account" linkText="Sign up" href="/sign-up" />
       </form>
     </>
   )

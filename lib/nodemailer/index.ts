@@ -2,7 +2,7 @@ import nodemailer from 'nodemailer'
 import { WELCOME_EMAIL_TEMPLATE } from './templets'
 
 export const transport=nodemailer.createTransport({
-    service: 'Gemail',
+    service: 'Gmail',
     auth: {
         user: process.env.NODEMAILER_EMAIL!,
         pass: process.env.NODEMAILER_PASSWORD!
