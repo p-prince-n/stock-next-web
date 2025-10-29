@@ -215,6 +215,19 @@ declare global {
         threshold: number;
         changePercent?: number;
     };
+
+    type UserForNewsEmail = {
+        email: string;
+        name?: string;
+        preferences?: {
+            industries?: string[];
+            riskTolerance?: string;
+        };
+    };
 }
 
-export {};
+
+
+
+
+export { };
